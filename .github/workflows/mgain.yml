@@ -1,0 +1,22 @@
+jobs:
+  build-cross-arm64:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install Aarch64 Toolchain
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y gcc-aarch64-linux-gnu g++-aarch64-linux-gnu
+      - name: Setup Node.js & Dependencies
+        uses: actions/setup-node@v3
+        with: { node-version: '18.x' }
+      - run: npm ci
+      - name: Build (Cross-Compile)
+        env:
+          CC: aarch64-linux-gnu-gcc
+          CXX: aarch64-linux-gnu-g++
+          TAURI_ARCH: aarch64-unknown-linux-gnu
+        run: |
+          npm run tauri build -- --target aarch64-unknown-linux-gnu \
+            --cross-gcc "$CC" --cross-gxx "$CXX"
+      # packaging and upload same as above
