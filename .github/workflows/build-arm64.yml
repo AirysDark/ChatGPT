@@ -41,6 +41,7 @@ jobs:
       - name: Install frontend dependencies
         run: npm ci
 
+
       - name: Build ChatGPT with Tauri (ARM64)
         env:
           TAURI_ARCH: aarch64
