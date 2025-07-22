@@ -5,7 +5,7 @@ on:
 
 jobs:
   build-arm64:
-    runs-on: ubuntu-22.04  # GitHub ARM64 runner
+    runs-on: ubuntu-22.04  # GitHub-hosted ARM64 runner
 
     steps:
       - name: Checkout repository
@@ -16,12 +16,11 @@ jobs:
         with:
           node-version: 18.x
 
-      - name: Install Rust toolchain
+      - name: Install Rust toolchain and target
         run: |
           curl https://sh.rustup.rs -sSf | sh -s -- -y
-          echo 'source $HOME/.cargo/env' >> $GITHUB_ENV
-          echo "PATH=$HOME/.cargo/bin:$PATH" >> $GITHUB_ENV
-          rustup target add aarch64-unknown-linux-gnu
+          echo "$HOME/.cargo/bin" >> $GITHUB_PATH
+          ~/.cargo/bin/rustup target add aarch64-unknown-linux-gnu
 
       - name: Install system dependencies
         run: |
@@ -41,7 +40,7 @@ jobs:
 
       - name: Build ChatGPT with Tauri for ARM64
         run: |
-          source $HOME/.cargo/env
+          ~/.cargo/bin/cargo build --release --target aarch64-unknown-linux-gnu
           npm run tauri build -- --target aarch64-unknown-linux-gnu
 
       - name: Upload Linux ARM64 artifacts
